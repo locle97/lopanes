@@ -2,16 +2,32 @@ package version
 
 import "testing"
 
-func TestVersionNotEmpty(t *testing.T) {
-	if Version() == "" {
-		t.Fatal("Version() must not be empty")
+func TestResolve(t *testing.T) {
+	tests := []struct {
+		name    string
+		version string
+		ok      bool
+		want    string
+	}{
+		{"no build info", "", false, fallback},
+		{"empty version", "", true, fallback},
+		{"devel marker", "(devel)", true, fallback},
+		{"local pseudo-version", "v0.0.0-20260617174314-212de90678ae", true, fallback},
+		{"dirty pseudo-version", "v0.0.0-20260617174314-212de90678ae+dirty", true, fallback},
+		{"released tag", "v0.1.0", true, "v0.1.0"},
+		{"released tag dirty", "v0.1.0+dirty", true, "v0.1.0+dirty"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := resolve(tt.version, tt.ok); got != tt.want {
+				t.Errorf("resolve(%q, %v) = %q, want %q", tt.version, tt.ok, got, tt.want)
+			}
+		})
 	}
 }
 
-func TestVersionFallsBackForLocalBuild(t *testing.T) {
-	// Under `go test`, the build carries no embedded module version, so
-	// Version() must return the fallback rather than an empty or "(devel)" string.
-	if got := Version(); got != fallback {
-		t.Fatalf("Version() = %q, want fallback %q for a non-installed build", got, fallback)
+func TestVersionNotEmpty(t *testing.T) {
+	if Version() == "" {
+		t.Fatal("Version() must not be empty")
 	}
 }
