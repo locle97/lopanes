@@ -9,10 +9,10 @@ import (
 
 	"github.com/charmbracelet/lipgloss"
 
-	"quash-board/internal/config"
-	"quash-board/internal/layout"
-	"quash-board/internal/runner"
-	"quash-board/internal/widget"
+	"github.com/locle97/quash-board/internal/config"
+	"github.com/locle97/quash-board/internal/layout"
+	"github.com/locle97/quash-board/internal/runner"
+	"github.com/locle97/quash-board/internal/widget"
 )
 
 const defaultWidth = 80

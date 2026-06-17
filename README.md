@@ -5,7 +5,21 @@ displays its output in a bordered box. The grid reflows to your terminal size.
 
 ## Install
 
+With a Go toolchain (1.25+):
+
 ```bash
+go install github.com/locle97/quash-board@latest
+```
+
+This installs the `quash-board` binary into `$(go env GOPATH)/bin` (or `$GOBIN`
+if set), which must be on your `$PATH`. Pin a specific version with, e.g.,
+`go install github.com/locle97/quash-board@v0.1.0`.
+
+### Build from source
+
+```bash
+git clone https://github.com/locle97/quash-board.git
+cd quash-board
 go build -o quash-board .
 ```
 

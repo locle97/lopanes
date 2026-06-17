@@ -4,8 +4,8 @@ import (
 	"strings"
 	"testing"
 
-	"quash-board/internal/layout"
-	"quash-board/internal/runner"
+	"github.com/locle97/quash-board/internal/layout"
+	"github.com/locle97/quash-board/internal/runner"
 )
 
 func TestRenderOK(t *testing.T) {
