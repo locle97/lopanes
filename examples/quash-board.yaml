@@ -1,0 +1,21 @@
+default_interval: 2s
+default_timeout: 5s
+rows:
+  - height: 1fr
+    widgets:
+      - name: clock
+        title: "Clock"
+        script: "./examples/scripts/clock.sh"
+        interval: 1s
+      - name: box
+        title: "This Box"
+        script: "./examples/scripts/counter.sh"
+  - height: 2fr
+    widgets:
+      - name: disk
+        title: "Disk"
+        script: "df -h / 2>/dev/null | head -n 5"
+        width: 2fr
+      - name: uptime
+        title: "Uptime"
+        script: "uptime"
