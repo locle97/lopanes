@@ -11,9 +11,9 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 
-	"quash-board/internal/config"
-	"quash-board/internal/printer"
-	"quash-board/internal/tui"
+	"github.com/locle97/quash-board/internal/config"
+	"github.com/locle97/quash-board/internal/printer"
+	"github.com/locle97/quash-board/internal/tui"
 )
 
 func main() {

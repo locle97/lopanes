@@ -1,4 +1,4 @@
-module quash-board
+module github.com/locle97/quash-board
 
 go 1.25.0
 

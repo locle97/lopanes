@@ -8,7 +8,7 @@ import (
 
 	"github.com/charmbracelet/lipgloss"
 
-	"quash-board/internal/config"
+	"github.com/locle97/quash-board/internal/config"
 )
 
 // lipglossWidth is the printed cell width of a line, ignoring ANSI escapes.
