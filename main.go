@@ -14,6 +14,7 @@ import (
 	"github.com/locle97/quash-board/internal/config"
 	"github.com/locle97/quash-board/internal/printer"
 	"github.com/locle97/quash-board/internal/tui"
+	"github.com/locle97/quash-board/internal/version"
 )
 
 func main() {
@@ -21,7 +22,13 @@ func main() {
 	printMode := flag.Bool("print", false, "render once to stdout and exit")
 	width := flag.Int("width", 0, "print-mode render width (default: terminal width or 80)")
 	noColor := flag.Bool("no-color", false, "strip ANSI escapes in print mode")
+	showVersion := flag.Bool("version", false, "print version and exit")
 	flag.Parse()
+
+	if *showVersion {
+		fmt.Println(version.Version())
+		return
+	}
 
 	path, err := resolveConfigPath(*cfgPath)
 	if err != nil {
