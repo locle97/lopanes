@@ -1,4 +1,4 @@
-// Package config parses and validates the quash-board YAML configuration into
+// Package config parses and validates the lopanes YAML configuration into
 // typed structs with defaults applied.
 package config
 

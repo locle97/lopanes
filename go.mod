@@ -1,4 +1,4 @@
-module github.com/locle97/quash-board
+module github.com/locle97/lopanes
 
 go 1.25.0
 

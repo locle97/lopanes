@@ -9,8 +9,8 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	"github.com/muesli/reflow/truncate"
 
-	"github.com/locle97/quash-board/internal/layout"
-	"github.com/locle97/quash-board/internal/runner"
+	"github.com/locle97/lopanes/internal/layout"
+	"github.com/locle97/lopanes/internal/runner"
 )
 
 // State is the rendering state of a widget.

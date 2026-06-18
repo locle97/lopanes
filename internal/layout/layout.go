@@ -2,7 +2,7 @@
 // size and the grid spec. All functions are pure.
 package layout
 
-import "github.com/locle97/quash-board/internal/config"
+import "github.com/locle97/lopanes/internal/config"
 
 // Rect is a widget's box position and size in terminal cells.
 type Rect struct {

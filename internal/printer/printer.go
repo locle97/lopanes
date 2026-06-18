@@ -9,10 +9,10 @@ import (
 
 	"github.com/charmbracelet/lipgloss"
 
-	"github.com/locle97/quash-board/internal/config"
-	"github.com/locle97/quash-board/internal/layout"
-	"github.com/locle97/quash-board/internal/runner"
-	"github.com/locle97/quash-board/internal/widget"
+	"github.com/locle97/lopanes/internal/config"
+	"github.com/locle97/lopanes/internal/layout"
+	"github.com/locle97/lopanes/internal/runner"
+	"github.com/locle97/lopanes/internal/widget"
 )
 
 const defaultWidth = 80

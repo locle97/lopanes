@@ -31,14 +31,14 @@ func TestResolveConfigPathSearchesCwd(t *testing.T) {
 	if err := os.Chdir(dir); err != nil {
 		t.Fatal(err)
 	}
-	if err := os.WriteFile("quash-board.yaml", []byte("x"), 0o644); err != nil {
+	if err := os.WriteFile("lopanes.yaml", []byte("x"), 0o644); err != nil {
 		t.Fatal(err)
 	}
 	got, err := resolveConfigPath("")
 	if err != nil {
 		t.Fatalf("search err: %v", err)
 	}
-	if filepath.Base(got) != "quash-board.yaml" {
+	if filepath.Base(got) != "lopanes.yaml" {
 		t.Fatalf("expected cwd config, got %q", got)
 	}
 }
@@ -50,7 +50,7 @@ func TestResolveConfigPathNoneFound(t *testing.T) {
 	if err := os.Chdir(dir); err != nil {
 		t.Fatal(err)
 	}
-	t.Setenv("HOME", dir) // no ~/.config/quash-board/config.yaml here
+	t.Setenv("HOME", dir) // no ~/.config/lopanes/config.yaml here
 	if _, err := resolveConfigPath(""); err == nil {
 		t.Fatal("no config anywhere should error")
 	}

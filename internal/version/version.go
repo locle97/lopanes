@@ -1,4 +1,4 @@
-// Package version exposes the build version of quash-board.
+// Package version exposes the build version of lopanes.
 package version
 
 import (

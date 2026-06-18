@@ -3,7 +3,7 @@ package layout
 import (
 	"testing"
 
-	"github.com/locle97/quash-board/internal/config"
+	"github.com/locle97/lopanes/internal/config"
 )
 
 func cfgFromRows(rows ...config.Row) config.Config {

@@ -7,9 +7,9 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 
-	"github.com/locle97/quash-board/internal/config"
-	"github.com/locle97/quash-board/internal/runner"
-	"github.com/locle97/quash-board/internal/widget"
+	"github.com/locle97/lopanes/internal/config"
+	"github.com/locle97/lopanes/internal/runner"
+	"github.com/locle97/lopanes/internal/widget"
 )
 
 func twoWidgetCfg() config.Config {

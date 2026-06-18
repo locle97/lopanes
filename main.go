@@ -1,4 +1,4 @@
-// Command quash-board renders a YAML-configured TUI dashboard of shell-driven
+// Command lopanes renders a YAML-configured TUI dashboard of shell-driven
 // widgets, with an interactive mode and a one-shot print mode.
 package main
 
@@ -11,14 +11,14 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 
-	"github.com/locle97/quash-board/internal/config"
-	"github.com/locle97/quash-board/internal/printer"
-	"github.com/locle97/quash-board/internal/tui"
-	"github.com/locle97/quash-board/internal/version"
+	"github.com/locle97/lopanes/internal/config"
+	"github.com/locle97/lopanes/internal/printer"
+	"github.com/locle97/lopanes/internal/tui"
+	"github.com/locle97/lopanes/internal/version"
 )
 
 func main() {
-	cfgPath := flag.String("config", "", "config file path (default: ./quash-board.yaml or ~/.config/quash-board/config.yaml)")
+	cfgPath := flag.String("config", "", "config file path (default: ./lopanes.yaml or ~/.config/lopanes/config.yaml)")
 	printMode := flag.Bool("print", false, "render once to stdout and exit")
 	width := flag.Int("width", 0, "print-mode render width (default: terminal width or 80)")
 	noColor := flag.Bool("no-color", false, "strip ANSI escapes in print mode")
@@ -53,13 +53,13 @@ func main() {
 }
 
 func fail(err error) {
-	fmt.Fprintln(os.Stderr, "quash-board:", err)
+	fmt.Fprintln(os.Stderr, "lopanes:", err)
 	os.Exit(1)
 }
 
 // resolveConfigPath returns the config file to use. An explicit flag must
-// exist; otherwise the default search order is ./quash-board.yaml then
-// ~/.config/quash-board/config.yaml.
+// exist; otherwise the default search order is ./lopanes.yaml then
+// ~/.config/lopanes/config.yaml.
 func resolveConfigPath(flagPath string) (string, error) {
 	if flagPath != "" {
 		if _, err := os.Stat(flagPath); err != nil {
@@ -67,9 +67,9 @@ func resolveConfigPath(flagPath string) (string, error) {
 		}
 		return flagPath, nil
 	}
-	candidates := []string{"./quash-board.yaml"}
+	candidates := []string{"./lopanes.yaml"}
 	if home, err := os.UserHomeDir(); err == nil {
-		candidates = append(candidates, filepath.Join(home, ".config", "quash-board", "config.yaml"))
+		candidates = append(candidates, filepath.Join(home, ".config", "lopanes", "config.yaml"))
 	}
 	for _, c := range candidates {
 		if _, err := os.Stat(c); err == nil {

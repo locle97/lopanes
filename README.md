@@ -1,4 +1,4 @@
-# quash-board
+# lopanes
 
 A terminal dashboard configured from YAML. Each widget runs a shell command and
 displays its output in a bordered box. The grid reflows to your terminal size.
@@ -8,29 +8,29 @@ displays its output in a bordered box. The grid reflows to your terminal size.
 With a Go toolchain (1.25+):
 
 ```bash
-go install github.com/locle97/quash-board@latest
+go install github.com/locle97/lopanes@latest
 ```
 
-This installs the `quash-board` binary into `$(go env GOPATH)/bin` (or `$GOBIN`
+This installs the `lopanes` binary into `$(go env GOPATH)/bin` (or `$GOBIN`
 if set), which must be on your `$PATH`. Pin a specific version with, e.g.,
-`go install github.com/locle97/quash-board@v0.1.0`.
+`go install github.com/locle97/lopanes@v0.1.0`.
 
 ### Build from source
 
 ```bash
-git clone https://github.com/locle97/quash-board.git
-cd quash-board
-go build -o quash-board .
+git clone https://github.com/locle97/lopanes.git
+cd lopanes
+go build -o lopanes .
 ```
 
 ## Usage
 
 ```
-quash-board [--config PATH] [--print] [--width N] [--no-color]
+lopanes [--config PATH] [--print] [--width N] [--no-color]
 ```
 
-- `--config PATH` — config file. Default search order: `./quash-board.yaml`,
-  then `~/.config/quash-board/config.yaml`.
+- `--config PATH` — config file. Default search order: `./lopanes.yaml`,
+  then `~/.config/lopanes/config.yaml`.
 - `--print` — run every widget once, print the dashboard, and exit (good for
   snapshots). Otherwise runs the interactive TUI.
 - `--width N` — print-mode render width (useful when redirecting to a file).
@@ -41,8 +41,8 @@ In interactive mode, press `q` or `Ctrl-C` to quit.
 ### Example
 
 ```bash
-quash-board --config examples/quash-board.yaml
-quash-board --print --config examples/quash-board.yaml --width 120 > snapshot.txt
+lopanes --config examples/lopanes.yaml
+lopanes --print --config examples/lopanes.yaml --width 120 > snapshot.txt
 ```
 
 ## Configuration
