@@ -1,5 +1,6 @@
 default_interval: 2s
 default_timeout: 5s
+default_color: gray
 rows:
   - height: 1fr
     widgets:
@@ -7,6 +8,7 @@ rows:
         title: "Clock"
         script: "./examples/scripts/clock.sh"
         interval: 1s
+        color: cyan
       - name: box
         title: "This Box"
         script: "./examples/scripts/counter.sh"
@@ -16,6 +18,7 @@ rows:
         title: "Disk"
         script: "df -h / 2>/dev/null | head -n 5"
         width: 2fr
+        color: green
       - name: uptime
         title: "Uptime"
         script: "uptime"
