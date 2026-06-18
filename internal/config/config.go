@@ -21,6 +21,7 @@ const (
 type Config struct {
 	DefaultInterval time.Duration
 	DefaultTimeout  time.Duration
+	DefaultColor    string
 	Rows            []Row
 }
 
@@ -42,12 +43,14 @@ type Widget struct {
 	Script      string
 	Interval    time.Duration
 	Timeout     time.Duration
-	WidthWeight int // >= 1
+	WidthWeight int    // >= 1
+	Color       string // canonical lipgloss color value
 }
 
 type rawConfig struct {
 	DefaultInterval string   `yaml:"default_interval"`
 	DefaultTimeout  string   `yaml:"default_timeout"`
+	DefaultColor    string   `yaml:"default_color"`
 	Rows            []rawRow `yaml:"rows"`
 }
 
@@ -63,6 +66,7 @@ type rawWidget struct {
 	Interval string `yaml:"interval"`
 	Timeout  string `yaml:"timeout"`
 	Width    string `yaml:"width"`
+	Color    string `yaml:"color"`
 }
 
 // Load reads and parses the config file at path.
@@ -94,11 +98,15 @@ func (r rawConfig) toConfig() (Config, error) {
 	if err != nil {
 		return Config{}, fmt.Errorf("default_timeout: %w", err)
 	}
+	dc, err := parseColor(r.DefaultColor, defaultColor)
+	if err != nil {
+		return Config{}, fmt.Errorf("default_color: %w", err)
+	}
 	if len(r.Rows) == 0 {
 		return Config{}, errors.New("config has no rows")
 	}
 
-	cfg := Config{DefaultInterval: di, DefaultTimeout: dt}
+	cfg := Config{DefaultInterval: di, DefaultTimeout: dt, DefaultColor: dc}
 	widgetCount := 0
 	for ri, rr := range r.Rows {
 		weight, fixed, err := parseSize(rr.Height)
@@ -131,6 +139,10 @@ func (r rawConfig) toConfig() (Config, error) {
 			if err != nil {
 				return Config{}, fmt.Errorf("rows[%d].widgets[%d].width: %w", ri, wi, err)
 			}
+			color, err := parseColor(rw.Color, dc)
+			if err != nil {
+				return Config{}, fmt.Errorf("rows[%d].widgets[%d].color: %w", ri, wi, err)
+			}
 			title := rw.Title
 			if title == "" {
 				title = rw.Name
@@ -142,6 +154,7 @@ func (r rawConfig) toConfig() (Config, error) {
 				Interval:    interval,
 				Timeout:     timeout,
 				WidthWeight: width,
+				Color:       color,
 			})
 			widgetCount++
 		}
