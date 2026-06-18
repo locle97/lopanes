@@ -29,29 +29,43 @@ type View struct {
 	State    State
 	ErrLabel string // e.g. "exit 1" or "timed out"
 	ErrTail  string // stderr to show under the error indicator
+	Color    string // canonical lipgloss color for the border/title
 }
 
 // Theme controls styling so tests can render deterministically.
 type Theme struct {
 	Dim func(string) string
+	// Colorize tints s with the given canonical color; a no-op when color is "".
+	Colorize func(s, color string) string
 }
 
 // DefaultTheme dims text with a faint SGR attribute.
 func DefaultTheme() Theme {
 	faint := lipgloss.NewStyle().Faint(true)
-	return Theme{Dim: func(s string) string { return faint.Render(s) }}
+	return Theme{
+		Dim: func(s string) string { return faint.Render(s) },
+		Colorize: func(s, color string) string {
+			if color == "" {
+				return s
+			}
+			return lipgloss.NewStyle().Foreground(lipgloss.Color(color)).Render(s)
+		},
+	}
 }
 
 // PlainTheme applies no styling (used by --no-color and tests).
 func PlainTheme() Theme {
-	return Theme{Dim: func(s string) string { return s }}
+	return Theme{
+		Dim:      func(s string) string { return s },
+		Colorize: func(s, _ string) string { return s },
+	}
 }
 
 // FromResult maps a runner.Result and prior good output into a View, returning
 // the View and the new "last good output" to remember. On failure the prior
 // good output is preserved so the box keeps showing it (dimmed).
-func FromResult(title, lastGood string, res runner.Result) (View, string) {
-	v := View{Title: title}
+func FromResult(title, color, lastGood string, res runner.Result) (View, string) {
+	v := View{Title: title, Color: color}
 	if res.Err == nil && !res.TimedOut && res.ExitCode == 0 {
 		v.State = StateOK
 		v.Body = res.Stdout
@@ -107,17 +121,18 @@ func Render(v View, rect layout.Rect, theme Theme) string {
 	innerW := w - 2
 	innerH := h - 2
 
-	top := topBorder(v.Title, w)
-	bottom := "└" + strings.Repeat("─", innerW) + "┘"
+	top := theme.Colorize(topBorder(v.Title, w), v.Color)
+	bottom := theme.Colorize("└"+strings.Repeat("─", innerW)+"┘", v.Color)
+	bar := theme.Colorize("│", v.Color)
 	body := buildBody(v, innerW, innerH, theme)
 
 	var b strings.Builder
 	b.WriteString(top)
 	for _, ln := range body {
 		b.WriteByte('\n')
-		b.WriteString("│")
+		b.WriteString(bar)
 		b.WriteString(ln)
-		b.WriteString("│")
+		b.WriteString(bar)
 	}
 	b.WriteByte('\n')
 	b.WriteString(bottom)

@@ -65,7 +65,7 @@ func Render(cfg config.Config, opts Options) string {
 		views[ri] = make([]widget.View, len(row.Widgets))
 		contentHeights[ri] = make([]int, len(row.Widgets))
 		for wi, w := range row.Widgets {
-			v, _ := widget.FromResult(w.Title, "", results[ri][wi])
+			v, _ := widget.FromResult(w.Title, w.Color, "", results[ri][wi])
 			views[ri][wi] = v
 			contentHeights[ri][wi] = widget.ContentHeight(v)
 		}

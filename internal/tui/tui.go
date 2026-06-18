@@ -47,7 +47,7 @@ func New(cfg config.Config) Model {
 		states[r] = make([]*widgetState, len(row.Widgets))
 		for c, w := range row.Widgets {
 			states[r][c] = &widgetState{
-				view: widget.View{Title: w.Title, State: widget.StatePending},
+				view: widget.View{Title: w.Title, State: widget.StatePending, Color: w.Color},
 			}
 		}
 	}
@@ -83,7 +83,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case widgetResultMsg:
 		st := m.states[msg.row][msg.col]
 		w := m.cfg.Rows[msg.row].Widgets[msg.col]
-		view, good := widget.FromResult(w.Title, st.lastGood, msg.result)
+		view, good := widget.FromResult(w.Title, w.Color, st.lastGood, msg.result)
 		st.view = view
 		st.lastGood = good
 		return m, scheduleTick(msg.row, msg.col, w.Interval)

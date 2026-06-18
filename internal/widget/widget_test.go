@@ -4,9 +4,44 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/charmbracelet/lipgloss"
+	"github.com/muesli/termenv"
+
 	"github.com/locle97/lopanes/internal/layout"
 	"github.com/locle97/lopanes/internal/runner"
 )
+
+func TestRenderColorWrapsBorderNotBody(t *testing.T) {
+	// lipgloss strips color when stdout is not a TTY (as under `go test`); force
+	// a color profile so DefaultTheme actually emits ANSI.
+	prev := lipgloss.ColorProfile()
+	lipgloss.SetColorProfile(termenv.TrueColor)
+	defer lipgloss.SetColorProfile(prev)
+
+	v := View{Title: "cpu", State: StateOK, Body: "42%", Color: "6"}
+	got := Render(v, layout.Rect{W: 10, H: 4}, DefaultTheme())
+	lines := strings.Split(got, "\n")
+	const esc = "\x1b"
+	// Top and bottom border lines carry color.
+	if !strings.Contains(lines[0], esc) || !strings.Contains(lines[3], esc) {
+		t.Errorf("expected ANSI on border lines, got:\n%q", got)
+	}
+	// The body text "42%" itself is not wrapped in color (only the side bars are).
+	if !strings.Contains(lines[1], "42%") {
+		t.Errorf("body text missing: %q", lines[1])
+	}
+	if strings.Contains(lines[1], esc+"[36m42%") {
+		t.Errorf("body text should not be colorized: %q", lines[1])
+	}
+}
+
+func TestRenderPlainThemeNoColor(t *testing.T) {
+	v := View{Title: "cpu", State: StateOK, Body: "42%", Color: "6"}
+	got := Render(v, layout.Rect{W: 10, H: 4}, PlainTheme())
+	if strings.Contains(got, "\x1b") {
+		t.Errorf("PlainTheme must emit no ANSI, got:\n%q", got)
+	}
+}
 
 func TestRenderOK(t *testing.T) {
 	v := View{Title: "cpu", State: StateOK, Body: "42%"}
@@ -80,7 +115,7 @@ func TestRenderTinyRectDoesNotPanic(t *testing.T) {
 
 func TestFromResultOK(t *testing.T) {
 	res := runner.Result{Stdout: "ok-out", ExitCode: 0}
-	v, good := FromResult("title", "prev", res)
+	v, good := FromResult("title", "", "prev", res)
 	if v.State != StateOK || v.Body != "ok-out" || good != "ok-out" {
 		t.Fatalf("ok mapping: %+v good=%q", v, good)
 	}
@@ -88,7 +123,7 @@ func TestFromResultOK(t *testing.T) {
 
 func TestFromResultErrorKeepsLastGood(t *testing.T) {
 	res := runner.Result{ExitCode: 2, Stderr: "bad"}
-	v, good := FromResult("title", "prevgood", res)
+	v, good := FromResult("title", "", "prevgood", res)
 	if v.State != StateError || v.ErrLabel != "exit 2" || v.Body != "prevgood" {
 		t.Fatalf("error mapping: %+v", v)
 	}
@@ -99,7 +134,7 @@ func TestFromResultErrorKeepsLastGood(t *testing.T) {
 
 func TestFromResultTimeout(t *testing.T) {
 	res := runner.Result{TimedOut: true, ExitCode: -1}
-	v, _ := FromResult("t", "", res)
+	v, _ := FromResult("t", "", "", res)
 	if v.State != StateError || v.ErrLabel != "timed out" {
 		t.Fatalf("timeout mapping: %+v", v)
 	}
