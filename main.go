@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"strings"
 
 	tea "github.com/charmbracelet/bubbletea"
 
@@ -30,11 +29,7 @@ func main() {
 		return
 	}
 
-	path, err := resolveConfigPath(*cfgPath)
-	if err != nil {
-		fail(err)
-	}
-	cfg, err := config.Load(path)
+	cfg, err := loadConfig(*cfgPath)
 	if err != nil {
 		fail(err)
 	}
@@ -57,24 +52,39 @@ func fail(err error) {
 	os.Exit(1)
 }
 
-// resolveConfigPath returns the config file to use. An explicit flag must
-// exist; otherwise the default search order is ./lopanes.yaml then
-// ~/.config/lopanes/config.yaml.
-func resolveConfigPath(flagPath string) (string, error) {
+// loadConfig resolves and loads the configuration. An explicit flagPath must
+// exist. Otherwise the default search order is ./lopanes.yaml then
+// ~/.config/lopanes/config.yaml; when neither exists, a starter config is
+// written to the latter and loaded. If that write fails, the embedded default
+// is parsed in memory so the first run never hard-fails.
+func loadConfig(flagPath string) (config.Config, error) {
 	if flagPath != "" {
 		if _, err := os.Stat(flagPath); err != nil {
-			return "", fmt.Errorf("config %q: %w", flagPath, err)
+			return config.Config{}, fmt.Errorf("config %q: %w", flagPath, err)
 		}
-		return flagPath, nil
+		return config.Load(flagPath)
 	}
+
 	candidates := []string{"./lopanes.yaml"}
+	var globalPath string
 	if home, err := os.UserHomeDir(); err == nil {
-		candidates = append(candidates, filepath.Join(home, ".config", "lopanes", "config.yaml"))
+		globalPath = filepath.Join(home, ".config", "lopanes", "config.yaml")
+		candidates = append(candidates, globalPath)
 	}
 	for _, c := range candidates {
 		if _, err := os.Stat(c); err == nil {
-			return c, nil
+			return config.Load(c)
 		}
 	}
-	return "", fmt.Errorf("no config found (looked in %s)", strings.Join(candidates, ", "))
+
+	if globalPath == "" {
+		fmt.Fprintln(os.Stderr, "lopanes: no config found and no home directory; using built-in default")
+		return config.Parse(config.DefaultYAML)
+	}
+	if err := config.WriteDefault(globalPath); err != nil {
+		fmt.Fprintf(os.Stderr, "lopanes: no config found and could not write starter config (%v); using built-in default\n", err)
+		return config.Parse(config.DefaultYAML)
+	}
+	fmt.Fprintf(os.Stderr, "lopanes: no config found; wrote a starter config to %s — edit it to customize.\n", globalPath)
+	return config.Load(globalPath)
 }

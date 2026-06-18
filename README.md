@@ -30,7 +30,9 @@ lopanes [--config PATH] [--print] [--width N] [--no-color]
 ```
 
 - `--config PATH` — config file. Default search order: `./lopanes.yaml`,
-  then `~/.config/lopanes/config.yaml`.
+  then `~/.config/lopanes/config.yaml`. If no config is found, lopanes writes
+  a starter config to `~/.config/lopanes/config.yaml` and runs it, so the
+  first run shows a working dashboard. Edit that file to customize.
 - `--print` — run every widget once, print the dashboard, and exit (good for
   snapshots). Otherwise runs the interactive TUI.
 - `--width N` — print-mode render width (useful when redirecting to a file).
