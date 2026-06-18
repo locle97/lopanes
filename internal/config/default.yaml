@@ -1,11 +1,12 @@
 default_interval: 2s
 default_timeout: 5s
+default_color: gray
 rows:
   - height: 1fr
     widgets:
-      - {name: clock, title: "Clock", script: "date '+%H:%M:%S'", interval: 1s}
+      - {name: clock, title: "Clock", script: "date '+%H:%M:%S'", interval: 1s, color: cyan}
       - {name: uptime, title: "Uptime", script: "uptime"}
   - height: 2fr
     widgets:
-      - {name: disk, title: "Disk", script: "df -h / 2>/dev/null | head -n 5", width: 2fr}
+      - {name: disk, title: "Disk", script: "df -h / 2>/dev/null | head -n 5", width: 2fr, color: green}
       - {name: mem, title: "Memory", script: "free -h 2>/dev/null || vm_stat"}

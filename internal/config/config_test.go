@@ -6,6 +6,45 @@ import (
 	"time"
 )
 
+func TestParseColorPrecedence(t *testing.T) {
+	src := `
+default_color: gray
+rows:
+  - widgets:
+      - {name: cpu, color: cyan, script: "echo hi"}
+      - {name: mem, script: "echo hi"}
+`
+	cfg, err := Parse([]byte(src))
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if cfg.DefaultColor != "8" {
+		t.Errorf("DefaultColor = %q, want 8", cfg.DefaultColor)
+	}
+	if got := cfg.Rows[0].Widgets[0].Color; got != "6" {
+		t.Errorf("cpu color = %q, want 6 (cyan override)", got)
+	}
+	if got := cfg.Rows[0].Widgets[1].Color; got != "8" {
+		t.Errorf("mem color = %q, want 8 (inherits default)", got)
+	}
+}
+
+func TestParseColorDefaultsWhite(t *testing.T) {
+	src := `
+rows:
+  - widgets:
+      - {name: cpu, script: "echo hi"}
+`
+	cfg, err := Parse([]byte(src))
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if cfg.DefaultColor != "7" || cfg.Rows[0].Widgets[0].Color != "7" {
+		t.Errorf("want white (7), got default=%q widget=%q",
+			cfg.DefaultColor, cfg.Rows[0].Widgets[0].Color)
+	}
+}
+
 func TestParseValidConfigAppliesDefaults(t *testing.T) {
 	src := `
 default_interval: 2s

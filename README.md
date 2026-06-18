@@ -52,6 +52,7 @@ lopanes --print --config examples/lopanes.yaml --width 120 > snapshot.txt
 ```yaml
 default_interval: 5s     # fallback per-widget refresh interval
 default_timeout: 10s     # fallback per-widget script timeout
+default_color: white     # fallback pane border color
 rows:
   - height: 1fr          # weight (Nfr) OR a fixed line count (e.g. 10)
     widgets:
@@ -60,6 +61,7 @@ rows:
         interval: 2s      # optional, else default_interval
         timeout: 3s       # optional, else default_timeout
         width: 1fr        # optional weight within the row; default equal share
+        color: cyan       # optional border color, else default_color
       - name: mem
         script: "free -h"
 ```
@@ -68,3 +70,27 @@ Scripts run via `bash -c` and inherit your environment plus `WIDGET_W`,
 `WIDGET_H` (the inner box size), `COLUMNS`, and `LINES`. stdout is the box body
 (ANSI colors preserved); a non-zero exit or timeout shows an error indicator and
 the stderr tail while keeping the last good output dimmed.
+
+### Pane color
+
+Each pane's border and title can be colored to emphasize it. Set `color` on a
+widget, or `default_color` at the top level to color every pane (defaults to
+`white`).
+
+```yaml
+default_color: gray        # fallback for all panes
+rows:
+  - widgets:
+      - {name: cpu, color: cyan, script: ...}
+      - {name: mem, script: ...}              # inherits default_color
+```
+
+Accepted values:
+
+- **Names:** `black`, `red`, `green`, `yellow`, `blue`, `magenta`, `cyan`,
+  `white`, and `bright-*` variants (`gray`/`grey` = `bright-black`).
+- **ANSI-256:** a number `0`–`255`.
+- **Hex:** `#rgb` or `#rrggbb`.
+
+The body output is never recolored, and the color stays the same in error
+states (the `⚠` indicator marks errors). `--no-color` (print mode) strips it.
